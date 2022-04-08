@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    {% for listing in listings %}
+        <ul>
+            <li>{{ listing.title }} || {{ listing.category.category }} || {{ listing.start_price }}
+                <ul>
+                    {% for comment in comments %}
+                        {% if comment.listing == listing %}
+                            <li>{{ comment.comment }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock %}
