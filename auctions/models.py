@@ -18,11 +18,15 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=255)
     start_price = models.FloatField(validators=[MinValueValidator(0.01)])
-    image_url = models.CharField(null=True, max_length=255)
+    image_url = models.URLField(max_length=200, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     start_t = models.DateTimeField()
     end_t = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.image_url}"
 
     DURATIONS = (
         (2, "Two Days"),
