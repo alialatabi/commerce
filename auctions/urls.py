@@ -6,6 +6,7 @@ urlpatterns = [
     path("category", views.category, name="category"),
     path("watchlist", views.watchlist, name="watchlist"),
     path("create", views.create, name="create"),
+    path("CreatePage", views.create_page, name="create_page"),
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),

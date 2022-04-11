@@ -81,5 +81,13 @@ def watchlist(request):
 
 
 @login_required
+def create_page(request):
+    return render(request, "auctions/create.html",{
+        "listings": Listing.objects.all()
+    })
+
+
+@login_required
 def create(request):
-    return render(request, "auctions/create.html")
+    if request.method == "POST":
+        return HttpResponseRedirect(reverse("index", args=(listing.id,)))
