@@ -13,48 +13,21 @@ class User(AbstractUser):
 class Category(models.Model):
     category = models.CharField(null=True, max_length=64)
 
+    def __str__(self):
+        return f"{self.category}"
+
 
 class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=255)
     start_price = models.FloatField(validators=[MinValueValidator(0.01)])
     image_url = models.URLField(max_length=200, null=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
-    start_t = models.DateTimeField()
-    end_t = models.DateTimeField()
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.image_url}"
-
-    DURATIONS = (
-        (2, "Two Days"),
-        (5, "Five Days"),
-        (10, "Ten Days"),
-        (20, "Twenty Days")
-    )
-
-    duration = models.FloatField(default=2, choices=DURATIONS)
-
-    class Meta:
-        ordering = ('-end_t',)
-
-    ended_manually = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Auction #{self.id}: {self.title} ({self.user.username})"
-
-    def save(self, *args, **kwargs):
-        self.start_t = datetime.now()
-        self.end_t = self.start_t + timedelta(days=self.duration)
-        super().save(*args, **kwargs)
-
-    def is_finished(self):
-        if self.ended_manually or self.end_t < timezone.now():
-            return True
-        else:
-            return False
+        return f"{self.title}"
 
 
 class Bid(models.Model):
@@ -63,12 +36,18 @@ class Bid(models.Model):
     bid = models.FloatField(default=0)
     date_and_time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.listing.title} || {self.bid}"
+
 
 class Comment(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     comment = models.CharField(max_length=255)
     time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.listing.title} || {self.comment}"
 
 
 class Watch(models.Model):

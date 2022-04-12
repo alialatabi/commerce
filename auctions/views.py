@@ -9,7 +9,6 @@ from .models import *
 
 
 def index(request):
-
     return render(request, "auctions/index.html", {
         "listings": Listing.objects.all(),
         "comments": Comment.objects.all()
@@ -27,6 +26,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
+
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/login.html", {
@@ -70,7 +70,9 @@ def register(request):
 
 @login_required
 def category(request):
-    return render(request, "auctions/category.html")
+    return render(request, "auctions/category.html",{
+        'categories': Category.objects.all()
+    })
 
 
 @login_required
@@ -81,13 +83,19 @@ def watchlist(request):
 
 
 @login_required
-def create_page(request):
-    return render(request, "auctions/create.html",{
-        "listings": Listing.objects.all()
-    })
-
-
-@login_required
 def create(request):
     if request.method == "POST":
-        return HttpResponseRedirect(reverse("index", args=(listing.id,)))
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        cat = request.POST.get('category')
+        cat = Category.objects.get(category=cat)
+        image = request.POST.get('img_url')
+        user = request.user
+        Listing.objects.create(title=title, description=description,
+                               start_price=price, category=cat,
+                               image_url=image, user=user)
+    return render(request, "auctions/create.html", {
+        "listings": Listing.objects.all(),
+        'categories': Category.objects.all()
+    })

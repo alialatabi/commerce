@@ -1,6 +1,23 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <div class="container">
     <h2>Category</h2>
-
+<table class="table container" >
+  <thead>
+    <tr class="table-active" >
+      <th scope="col">#</th>
+      <th scope="col">Category</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for category in categories %}
+    <tr class="table-default">
+      <th scope="row">{{ category.id }}</th>
+        <td>{{ category }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+    </div>
 {% endblock %}
