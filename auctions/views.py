@@ -70,7 +70,7 @@ def register(request):
 
 @login_required
 def category(request):
-    return render(request, "auctions/category.html",{
+    return render(request, "auctions/category.html", {
         'categories': Category.objects.all()
     })
 
@@ -98,4 +98,30 @@ def create(request):
     return render(request, "auctions/create.html", {
         "listings": Listing.objects.all(),
         'categories': Category.objects.all()
+    })
+
+
+def show(request, l_id):
+
+    if request.POST:
+        listing = Listing.objects.get(id=l_id)
+        bid_price = request.POST.get('bid_price')
+        Bid.objects.create(listing=listing,
+                           user=request.user,
+                           bid=bid_price)
+
+    listing = Listing.objects.get(id=l_id)
+    bids = Bid.objects.filter(listing=listing)
+    print(bids)
+    current_bid = 0
+    if bids:
+        for bid in bids:
+            if bid.bid > current_bid:
+                current_bid = bid.bid
+    else:
+        current_bid = 'No Bids Yet'
+
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "current_bid": current_bid
     })
