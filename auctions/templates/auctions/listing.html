@@ -20,14 +20,23 @@
                         <h3 class="mb-0 text-primary">{{ listing }}</h3>
                         <div class="mb-1 text-muted">Created on: {{ listing.date }}</div>
                         <p class="card-text mb-auto">{{ listing.description }}</p>
-                        <p class="card-text mb-auto text-primary">Current Bid: {{ current_bid }}</p>
-
+                        {% if current_bid == 'No Bids Yet' %}
+                            <p class="card-text mb-auto text-primary">Starting Price: {{ listing.start_price }}</p>
+                        {% else %}
+                            <p class="card-text mb-auto text-primary">Current Bid: {{ current_bid }}</p>
+                        {% endif %}
                         <form action="{% url 'show' listing.id %}" method="post" class="form-group col p-4 d-flex">
                             {% csrf_token %}
-                            <input autofocus class="form-control" style="width: 150px" type="text" name="bid_price" placeholder="Place Bid">
-                            <input autofocus class="btn btn-primary" style="width: 70px; margin-left: 15px" type="submit" name="bid"  value="Bid!" placeholder="Bid">
-
+                            <input autofocus class="form-control" style="width: 150px"  step="0.01" type="number" name="bid_price"
+                                   placeholder="Place Bid">
+                            <input autofocus class="btn btn-primary" style="width: 70px; margin-left: 15px"
+                                   type="submit" name="bid" value="Bid!" placeholder="Bid">
                         </form>
+                        {% if err %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ err }}
+                            </div>
+                        {% endif %}
                     </div>
 
                 </div>

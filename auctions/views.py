@@ -102,14 +102,6 @@ def create(request):
 
 
 def show(request, l_id):
-
-    if request.POST:
-        listing = Listing.objects.get(id=l_id)
-        bid_price = request.POST.get('bid_price')
-        Bid.objects.create(listing=listing,
-                           user=request.user,
-                           bid=bid_price)
-
     listing = Listing.objects.get(id=l_id)
     bids = Bid.objects.filter(listing=listing)
     print(bids)
@@ -121,7 +113,28 @@ def show(request, l_id):
     else:
         current_bid = 'No Bids Yet'
 
+    err = ''
+    if request.POST:
+        listing = Listing.objects.get(id=l_id)
+        bid_price = request.POST.get('bid_price')
+        if bids:
+            if float(bid_price) > current_bid:
+                Bid.objects.create(listing=listing,
+                                   user=request.user,
+                                   bid=bid_price)
+                current_bid = bid_price
+            else:
+                err = f"The current largest bid is bigger than your bid!!!"
+        else:
+            if float(bid_price) > listing.start_price:
+                Bid.objects.create(listing=listing,
+                                   user=request.user,
+                                   bid=bid_price)
+            else:
+                err = f"Your bid is smaller than the starting price"
+
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "current_bid": current_bid
+        "current_bid": current_bid,
+        "err": err
     })
