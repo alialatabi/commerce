@@ -7,11 +7,11 @@
 </head>
 <body>
 {% block body %}
-    <div class="row mb-2 ">
-        <div class="col-md-6 container-fluid">
+    <div class="row mb-3 ">
+        <div class="col-md-8 container-fluid">
             <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col-auto d-none d-lg-block" style="padding: 0">
-                    <img src="{{ listing.image_url }}" class="card-img-top" width="250" height="300" alt="img">
+                    <img src="{{ listing.image_url }}" class="card-img-top" width="350" height="400" alt="img">
 
                 </div>
                 <div class="col p-4 d-flex flex-column position-static">
@@ -31,15 +31,33 @@
                             <input autofocus class="form-control" style="width: 150px" step="0.01" type="number"
                                    name="bid_price"
                                    placeholder="Place Bid">
-                            <input autofocus class="btn btn-primary" style="width: 70px; margin-left: 15px"
+                            <input autofocus class="btn mb-1 btn-primary" style="width: 70px; margin-left: 15px"
                                    type="submit" value="Bid!">
                         </form>
+                        {% if listing.is_closed == True %}
+                            {% for bid in bids %}
+                                {% if bid.bid == current_bid and bid.user == current_user %}
+                                    <div class="alert alert-success" role="alert">
+                                    Congrats!!! you won this auction yehoooooo
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     {% else %}
                         <form action="{% url 'close' listing.id %}" method="post">
                             {% csrf_token %}
                             <input autofocus class="btn btn-danger" style="width: 70px; margin-left: 15px"
                                    type="submit" value="Close!">
                         </form>
+                        {% if listing.is_closed == True %}
+                            {% for bid in bids %}
+                                {% if bid.bid == current_bid %}
+                                    <div class="alert alert-success" role="alert">
+                                    {{ bid.user.username }} is the winner
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     {% endif %}
 
                     {% if err %}

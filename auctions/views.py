@@ -141,9 +141,11 @@ def show(request, l_id):
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
+        "bids": bids,
         "current_bid": current_bid,
         "err": err,
-        "my_listing": my_listing
+        "my_listing": my_listing,
+        "current_user": user
     })
 
 
@@ -152,4 +154,5 @@ def close(request, l_id):
         listing = Listing.objects.get(id=l_id)
         listing.is_closed = True
         listing.save()
-        return HttpResponseRedirect(reverse('show', args=(l_id,)))
+
+    return HttpResponseRedirect(reverse('show', args=(l_id,)))
