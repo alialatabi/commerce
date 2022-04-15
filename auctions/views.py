@@ -104,37 +104,51 @@ def create(request):
 def show(request, l_id):
     listing = Listing.objects.get(id=l_id)
     bids = Bid.objects.filter(listing=listing)
-    print(bids)
+    user = request.user
     current_bid = 0
+    err = ''
+    my_listing = False
     if bids:
         for bid in bids:
             if bid.bid > current_bid:
                 current_bid = bid.bid
     else:
         current_bid = 'No Bids Yet'
+    if user:
+        if listing.user == user:
+            my_listing = True
 
-    err = ''
     if request.POST:
-        listing = Listing.objects.get(id=l_id)
-        bid_price = request.POST.get('bid_price')
-        if bids:
-            if float(bid_price) > current_bid:
-                Bid.objects.create(listing=listing,
-                                   user=request.user,
-                                   bid=bid_price)
-                current_bid = bid_price
+        if user != listing.user:
+            bid_price = request.POST.get('bid_price')
+            if bids:
+                if float(bid_price) > current_bid:
+                    Bid.objects.create(listing=listing,
+                                       user=user,
+                                       bid=bid_price)
+                    current_bid = bid_price
+                else:
+                    err = "The current largest bid is bigger than your bid!!!"
             else:
-                err = f"The current largest bid is bigger than your bid!!!"
+                if float(bid_price) > listing.start_price:
+                    Bid.objects.create(listing=listing,
+                                       user=user,
+                                       bid=bid_price)
+                else:
+                    err = "Your bid is smaller than the starting price"
         else:
-            if float(bid_price) > listing.start_price:
-                Bid.objects.create(listing=listing,
-                                   user=request.user,
-                                   bid=bid_price)
-            else:
-                err = f"Your bid is smaller than the starting price"
+            err = "You Can't bid on your own Listing"
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "current_bid": current_bid,
-        "err": err
+        "err": err,
+        "my_listing": my_listing
     })
+
+
+def close(request, l_id):
+    if request.POST:
+        listing = Listing.objects.get(id=l_id)
+        listing.is_closed = True
+        return HttpResponseRedirect(reverse('show', args=(l_id,)))
