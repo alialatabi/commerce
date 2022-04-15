@@ -151,4 +151,5 @@ def close(request, l_id):
     if request.POST:
         listing = Listing.objects.get(id=l_id)
         listing.is_closed = True
+        listing.save()
         return HttpResponseRedirect(reverse('show', args=(l_id,)))

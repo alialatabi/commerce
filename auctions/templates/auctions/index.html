@@ -18,10 +18,11 @@
         <h2>Active Listings</h2>
         <div class="row">
             {% for listing in listings %}
+                {% if listing.is_closed == False %}
                 <div class="col-6">
                     <a href="{% url 'show' listing.id %} " style="text-decoration: none;">
                         <div class="card form-group">
-                            <img src="{{ listing.image_url.url }}" class="card-img-top" alt="img">
+                            <img src="{{ listing.image_url }}" height="500" class="card-img-top" alt="img">
                             <div class="card-body ">
                                 <h5 class="card-title">{{ listing.title }}</h5>
                                 <p class="card-text" style="font-weight: bold">Price: ${{ listing.start_price }} </p>
@@ -31,6 +32,7 @@
                         </div>
                     </a>
                 </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
