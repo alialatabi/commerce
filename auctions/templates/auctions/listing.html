@@ -38,7 +38,7 @@
                             {% for bid in bids %}
                                 {% if bid.bid == current_bid and bid.user == current_user %}
                                     <div class="alert alert-success" role="alert">
-                                    Congrats!!! you won this auction yehoooooo
+                                        Congrats!!! you won this auction yehoooooo
                                     </div>
                                 {% endif %}
                             {% endfor %}
@@ -53,7 +53,7 @@
                             {% for bid in bids %}
                                 {% if bid.bid == current_bid %}
                                     <div class="alert alert-success" role="alert">
-                                    {{ bid.user.username }} is the winner
+                                        {{ bid.user.username }} is the winner
                                     </div>
                                 {% endif %}
                             {% endfor %}
@@ -69,6 +69,29 @@
             </div>
         </div>
     </div>
+    <div class="row mb-3 ">
+        <div class="col-md-8 container-fluid">
+            <div class="col g-0 border rounded overflow-hidden flex-md-row mb-6 shadow-sm h-md-250 position-relative">
+                <form action="{% url 'comment' listing.id %}" method="post" style="margin-bottom: 60px">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea class="form-control" rows="2" style="margin-top: 10px" name="comment"
+                                  placeholder="Add Comment"></textarea>
+                    </div>
+                    <div class="form-group">
+                    <input class="btn mb-1 btn-primary float-right" type="submit" value="Comment">
+                    </div>
+                </form>
+                {% for comment in comments %}
+                    <div class="form-group">
+                        <div class="text-muted">{{ listing.user.username }} Dated: {{ comment.time }}</div>
+                        <div class="form-group">{{ comment.comment }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 </body>
 </html>

@@ -119,36 +119,42 @@ def show(request, l_id):
             my_listing = True
 
     if request.POST:
-        if user != listing.user:
-            bid_price = request.POST.get('bid_price')
-            if bids:
-                if float(bid_price) > current_bid:
-                    Bid.objects.create(listing=listing,
-                                       user=user,
-                                       bid=bid_price)
-                    current_bid = bid_price
+        if not user.is_anonymous:
+            if user != listing.user:
+                bid_price = request.POST.get('bid_price')
+                if bids:
+                    if float(bid_price) > current_bid:
+                        Bid.objects.create(listing=listing,
+                                           user=user,
+                                           bid=bid_price)
+                        current_bid = bid_price
+                    else:
+                        err = "The current largest bid is bigger than your bid!!!"
                 else:
-                    err = "The current largest bid is bigger than your bid!!!"
+                    if float(bid_price) > listing.start_price:
+                        Bid.objects.create(listing=listing,
+                                           user=user,
+                                           bid=bid_price)
+                    else:
+                        err = "Your bid is smaller than the starting price"
             else:
-                if float(bid_price) > listing.start_price:
-                    Bid.objects.create(listing=listing,
-                                       user=user,
-                                       bid=bid_price)
-                else:
-                    err = "Your bid is smaller than the starting price"
+                err = "You Can't bid on your own Listing"
         else:
-            err = "You Can't bid on your own Listing"
+            return HttpResponseRedirect(reverse('login'))
 
+    comments = Comment.objects.filter(listing=l_id)
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": bids,
         "current_bid": current_bid,
         "err": err,
         "my_listing": my_listing,
-        "current_user": user
+        "current_user": user,
+        "comments": comments,
     })
 
 
+@login_required()
 def close(request, l_id):
     if request.POST:
         listing = Listing.objects.get(id=l_id)
@@ -163,3 +169,12 @@ def cat_listings(request, cat_id):
     return render(request, "auctions/index.html", {
         "listings": listings,
     })
+
+
+def comment(request, l_id):
+    if not request.user.is_anonymous:
+        if request.POST:
+            listing = Listing.objects.get(id=l_id)
+            comment = request.POST.get('comment')
+            Comment.objects.create(listing=listing, user=request.user, comment=comment)
+    return HttpResponseRedirect(reverse('show', args=(l_id,)))
