@@ -14,8 +14,11 @@
             {% for category in categories %}
                 <tr class="table-default">
                     <th scope="row">{{ category.id }}</th>
-                    <td>{{ category }}</td>
+                    <td>
+                        <a href="{% url 'cat_listings' category.id %}">{{ category }}</a>
+                    </td>
                 </tr>
+
             {% endfor %}
             </tbody>
         </table>

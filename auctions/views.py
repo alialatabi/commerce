@@ -156,3 +156,10 @@ def close(request, l_id):
         listing.save()
 
     return HttpResponseRedirect(reverse('show', args=(l_id,)))
+
+
+def cat_listings(request, cat_id):
+    listings = Listing.objects.filter(category=cat_id)
+    return render(request, "auctions/index.html", {
+        "listings": listings,
+    })
