@@ -76,13 +76,6 @@ def category(request):
 
 
 @login_required
-def watchlist(request):
-    return render(request, "auctions/watchlist.html", {
-        "watches": Watch.objects.all()
-    })
-
-
-@login_required
 def create(request):
     if request.method == "POST":
         title = request.POST.get('title')
@@ -102,6 +95,7 @@ def create(request):
 
 
 def show(request, l_id):
+    is_watched = None
     listing = Listing.objects.get(id=l_id)
     bids = Bid.objects.filter(listing=listing)
     user = request.user
@@ -139,6 +133,7 @@ def show(request, l_id):
                         err = "Your bid is smaller than the starting price"
             else:
                 err = "You Can't bid on your own Listing"
+            is_watched = Watch.objects.filter(listing=l_id, user=user)
         else:
             return HttpResponseRedirect(reverse('login'))
 
@@ -151,6 +146,7 @@ def show(request, l_id):
         "my_listing": my_listing,
         "current_user": user,
         "comments": comments,
+        "is_watched": is_watched,
     })
 
 
@@ -177,4 +173,38 @@ def comment(request, l_id):
             listing = Listing.objects.get(id=l_id)
             comment = request.POST.get('comment')
             Comment.objects.create(listing=listing, user=request.user, comment=comment)
-    return HttpResponseRedirect(reverse('show', args=(l_id,)))
+            return HttpResponseRedirect(reverse('show', args=(l_id,)))
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
+
+def watch(request, l_id):
+    if not request.user.is_anonymous:
+        if request.POST:
+            listing = Listing.objects.get(id=l_id)
+            Watch.objects.create(listing=listing, user=request.user)
+            return HttpResponseRedirect(reverse('show', args=(l_id,)))
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
+
+@login_required
+def watchlist(request):
+    watches = Watch.objects.filter(user=request.user)
+    return render(request, "auctions/watchlist.html", {
+        "watches": watches
+    })
+
+
+# def del_watch(request, w_id):
+#     global l_id
+#     if not request.user.is_anonymous:
+#         if request.POST:
+#             watched_listing = Watch.objects.get(id=w_id)
+#             l_id = watched_listing.listing.id
+#             watched_listing.delete()
+#             watched_listing.save()
+#         return HttpResponseRedirect(reverse('show', args=(l_id,)))
+#     else:
+#         return HttpResponseRedirect(reverse('login'))
+

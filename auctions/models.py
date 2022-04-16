@@ -54,3 +54,6 @@ class Comment(models.Model):
 class Watch(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watch")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watch")
+
+    def __str__(self):
+        return f"{self.listing.title} || {self.user.username}"

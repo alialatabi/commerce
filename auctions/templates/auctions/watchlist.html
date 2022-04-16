@@ -4,7 +4,14 @@
     <h2>Watch List</h2>
     <ul>
         {% for watch in watches %}
-            <li>{{ watch.listing.title }}</li>
+            <div class="row mb-3 ">
+                <div class="col-md-8 container-fluid">
+                    <div class="col g-0 border rounded overflow-hidden flex-md-row mb-6 shadow-sm h-md-250 position-relative">
+                        <div class="text-primary"><a href="{% url 'show' watch.listing.id %}">{{ watch.listing }}                   ${{ watch.listing.start_price }}</a></div>
+
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     </ul>
 {% endblock %}
