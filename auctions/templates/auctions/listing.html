@@ -15,18 +15,22 @@
 
                 </div>
                 <div class="col p-4 d-flex flex-column position-static">
-                    {% if is_watched %}
-                        <div class="form-group">
-                            <input class="btn mb-1 btn-danger float-right" type="submit" value="Remove From Watch List">
-                        </div>
-                    {% else %}
-                        <form action="{% url 'watch' listing.id %}" method="post">
+
+                    <form action="{% url 'watch' listing.id %}" method="post">
+                        {% if is_watched %}
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input class="btn mb-1 btn-danger float-right" type="submit"
+                                       value="Remove From Watch List">
+                            </div>
+                        {% else %}
                             {% csrf_token %}
                             <div class="form-group">
                                 <input class="btn mb-1 btn-light float-right" type="submit" value="Add To Watch List">
                             </div>
-                        </form>
-                    {% endif %}
+                        {% endif %}
+                    </form>
+
                     <strong class="d-inline-block mb-2 text-muted">{{ listing.category }}</strong>
                     <h3 class="mb-0 text-primary">{{ listing }}</h3>
                     <div class="mb-1 text-muted">Created on: {{ listing.date }}</div>
@@ -34,7 +38,7 @@
                     {% if current_bid == 'No Bids Yet' %}
                         <p class="card-text mb-auto text-primary">Starting Price: {{ listing.start_price }}</p>
                     {% else %}
-                        <p class="card-text mb-auto text-primary">Current Bid: {{ current_bid }}</p>
+                        <p class="card-text mb-auto text-primary">Current Bid: $ {{ current_bid }}</p>
                     {% endif %}
 
                     {% if my_listing == False %}
@@ -43,7 +47,8 @@
                             <input autofocus class="form-control" style="width: 150px" step="0.01" type="number"
                                    name="bid_price"
                                    placeholder="Place Bid">
-                            <input autofocus class="btn mb-1 btn-primary" style="width: 70px; height: 40px; margin-left: 15px"
+                            <input autofocus class="btn mb-1 btn-primary"
+                                   style="width: 70px; height: 40px; margin-left: 15px"
                                    type="submit" value="Bid!">
                         </form>
                         {% if listing.is_closed == True %}

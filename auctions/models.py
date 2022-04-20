@@ -51,9 +51,14 @@ class Comment(models.Model):
         return f"{self.listing.title} || {self.comment}"
 
 
-class Watch(models.Model):
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watch")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watch")
+class Watchlist(models.Model):
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchlist")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
+
+    class Meta:
+        verbose_name = "watchlist"
+        verbose_name_plural = "watchlists"
+        unique_together = ["listing", "user"]
 
     def __str__(self):
-        return f"{self.listing.title} || {self.user.username}"
+        return f"{self.listing} on user {self.user} watchlist"
