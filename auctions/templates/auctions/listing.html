@@ -38,7 +38,7 @@
                     {% if current_bid == 'No Bids Yet' %}
                         <p class="card-text mb-auto text-primary">Starting Price: {{ listing.start_price }}</p>
                     {% else %}
-                        <p class="card-text mb-auto text-primary">Current Bid: {{ current_bid }}</p>
+                        <p class="card-text mb-auto text-primary">Current Bid: $ {{ current_bid }}</p>
                     {% endif %}
 
                     {% if my_listing == False %}

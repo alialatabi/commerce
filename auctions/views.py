@@ -126,7 +126,7 @@ def show(request, l_id):
         if not user.is_anonymous:
             if user != listing.user:
                 bid_price = request.POST.get('bid_price')
-                if bids:
+                if bid_price:
                     if float(bid_price) > current_bid:
                         Bid.objects.create(listing=listing,
                                            user=user,
